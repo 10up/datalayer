@@ -132,8 +132,20 @@ class DataLayer {
          */
         $this->data = apply_filters( 'tenup_datalayer_data_values', $this->data );
 
-        // JSON encode data before returning.
-        return wp_json_encode( $this->data );
+        // Return the prepared data.
+        return $this->data;
+    }
+
+    /**
+     * Get JSON formatted data.
+     * 
+     * @since  1.0.0
+     * @access public
+     * 
+     * @return string
+     */
+    public function get_json_data() {
+        return wp_json_encode( $this->prepare_data() );
     }
 
     /**
