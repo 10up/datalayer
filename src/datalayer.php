@@ -44,6 +44,18 @@ class DataLayer {
      * @return void
      */
     public function setup() {
+        add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\enqueue_scripts' );
+    }
+
+    /**
+     * Enqueue Scripts.
+     * 
+     * @since  1.0.0
+     * @access public
+     * 
+     * @return void
+     */
+    public function enqueue_scripts() {
         /**
          * List of script handles to have support for datalayer parameters.
          * 
