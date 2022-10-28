@@ -1,30 +1,83 @@
 <?php
 /**
- * Plugin Name: Datalayer
- * Version: 1.0.0
+ * DataLayer class file.
+ * 
+ * @since 1.0.0
+ * 
+ * @package 10up
  */
 
-//  namespace Tenup\DataLayer;
+namespace TenUp\DataLayer;
 
 /**
- * Note: We have not decided yet whether to use it as standalone WordPress plugin OR a class.
+ * DataLayer Class
  */
-
 class DataLayer {
+    /**
+     * Data.
+     * 
+     * @since  1.0.0
+     * @access public
+     * 
+     * @return array
+     */
     public $data = array();
 
+    /**
+     * Initiate Datalayer.
+     * 
+     * @since  1.0.0
+     * @access public
+     * 
+     * @return void
+     */
     public function __construct() {
         add_action( 'wp_head', [ $this, 'setup' ] );
-        // add_action( 'wp_head', __NAMESPACE__ . '\\setup' );
     }
 
+    /**
+     * Setup Datalayer.
+     * 
+     * @since  1.0.0
+     * @access public
+     * 
+     * @return void
+     */
     public function setup() {
-        echo "<pre>"; print_r($this->get_data()); echo "</pre>";
+        /**
+         * List of script handles to have support for datalayer parameters.
+         * 
+         * @since 1.0.0
+         * 
+         * @return array
+         */
+        $handles = apply_filters( 'tenup_datalayer_script_handles', [] );
+
+        // Loop through the list of handles to localize the datalayer parameters to the script handles.
+        if ( ! empty( $handles ) && is_array( $handles ) ) {
+            foreach( $handles as $handle ) {
+                wp_localize_script(
+                    $handle,
+                    'datalayer_args',
+                    $this->prepare_data()
+                );        
+            }
+        }
     }
 
-    public function get_data() {
+    /**
+     * Prepare Data.
+     * 
+     * @since  1.0.0
+     * @access public
+     * 
+     * @return array
+     */
+    public function prepare_data() {
+        // Get queried object ID.
         $id = get_queried_object_id();
         
+        // Assign the object ID to the datalayer data.
         $this->data['id'] = $id;
         
         if ( is_archive() ) {
@@ -59,18 +112,17 @@ class DataLayer {
             if ( is_front_page() || is_home() ) {
                 $this->data['template'] = 'home';
             } elseif ( is_singular() ) {
-                $this->data['title'] = $post->post_title;
-                $this->data['url'] = get_the_permalink( $id );
-                $this->data['categories'] = $taxonomy_data['category'];
-                $this->data['tags'] = $taxonomy_data['post_tag'];
-                $this->data['post_type'] = get_post_type( $id );
-                $this->data['template'] = 'single';
-                $this->data['author'] = $this->get_author_name( $post->post_author );
-            } else {
-
+                $this->data['title']      = $post->post_title;
+                $this->data['url']        = get_the_permalink( $id );
+                $this->data['categories'] = ! empty( $taxonomy_data['category'] ) ? $taxonomy_data['category'] : '';
+                $this->data['tags']       = ! empty( $taxonomy_data['post_tag'] ) ? $taxonomy_data['post_tag'] : '';
+                $this->data['post_type']  = get_post_type( $id );
+                $this->data['template']   = 'single';
+                $this->data['author']     = $this->get_author_name( $post->post_author );
             }
         }
     
+        // Assign publish date to the datalayer data.
         $this->data['publish_date'] = $this->get_publish_date( $id );
 
         /**
@@ -80,6 +132,7 @@ class DataLayer {
          */
         $this->data = apply_filters( 'tenup_datalayer_data_values', $this->data );
 
+        // JSON encode data before returning.
         return wp_json_encode( $this->data );
     }
 
@@ -88,7 +141,8 @@ class DataLayer {
      * 
      * @param int $author_id Author ID.
      * 
-     * @since 1.0.0
+     * @since  1.0.0
+     * @access public
      * 
      * @return string
      */
@@ -101,7 +155,8 @@ class DataLayer {
      * 
      * @param int $id ID.
      * 
-     * @since 1.0.0
+     * @since  1.0.0
+     * @access public
      * 
      * @return string
      */
@@ -112,7 +167,8 @@ class DataLayer {
     /**
      * Get Date Format.
      * 
-     * @since 1.0.0
+     * @since  1.0.0
+     * @access public
      * 
      * @return string
      */
@@ -120,6 +176,14 @@ class DataLayer {
         return apply_filters( 'tenup_datalayer_date_format', get_option('date_format') );
     }
 
+    /**
+     * Get Taxonomy data.
+     * 
+     * @since  1.0.0
+     * @access public
+     * 
+     * @return array
+     */
     public function get_taxonomy_data( $id ) {
         // Setup Taxonomy Data.
         $taxonomies = get_taxonomies();
@@ -131,7 +195,3 @@ class DataLayer {
         return $object_terms;
     }
 }
-
-// add_action( 'init', [])
-$datalayer = new DataLayer();
-// echo "<pre>";print_r($datalayer->setup()); echo "</pre>";

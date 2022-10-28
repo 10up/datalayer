@@ -1,0 +1,17 @@
+{
+    "name": "10up/datalayer",
+    "description": "It will add a datalayer class that will help to send essential WordPress page/post parameters directly to JS for use.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "10up",
+            "email": "hello@10up.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {"TenUp\\DataLayer\\": "src/"}
+    },
+    "require": {}
+}
