@@ -1,0 +1,27 @@
+{
+    "name": "datalayer/test-example",
+    "description": "This is a test example for datalayer implementation.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "10up",
+            "email": "hello@10up.com"
+        }
+    ],
+    "repositories": [
+        {
+            "url": "https://github.com/10up/datalayer.git",
+            "type": "git"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "DataLayer\\Test\\": "src/"
+        }
+    },
+    "require": {
+        "10up/datalayer": "dev-trunk"
+    }
+}
