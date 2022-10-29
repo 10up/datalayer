@@ -24,68 +24,38 @@ class DataLayer {
     public $data = array();
 
     /**
-     * Initiate Datalayer.
+     * Initiate Datalayer class.
      * 
      * @since  1.0.0
      * @access public
      * 
      * @return void
      */
-    public function __construct() {
-        add_action( 'wp_head', [ $this, 'setup' ] );
-    }
+    public function __construct() {}
 
     /**
      * Setup Datalayer.
      * 
-     * @since  1.0.0
-     * @access public
-     * 
-     * @return void
-     */
-    public function setup() {
-        add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\enqueue_scripts' );
-    }
-
-    /**
-     * Enqueue Scripts.
+     * @param string $return_type Return Type. Default: array | Supported values: `array` and `json`.
      * 
      * @since  1.0.0
      * @access public
      * 
      * @return void
      */
-    public function enqueue_scripts() {
-        /**
-         * List of script handles to have support for datalayer parameters.
-         * 
-         * @since 1.0.0
-         * 
-         * @return array
-         */
-        $handles = apply_filters( 'tenup_datalayer_script_handles', [] );
-
-        // Loop through the list of handles to localize the datalayer parameters to the script handles.
-        if ( ! empty( $handles ) && is_array( $handles ) ) {
-            foreach( $handles as $handle ) {
-                wp_localize_script(
-                    $handle,
-                    'datalayer_args',
-                    $this->prepare_data()
-                );        
-            }
-        }
+    public function setup( $return_type = 'array' ) {
+        return $return_type === 'json' ? wp_json_encode( $this->get_data() ) : $this->get_data();
     }
 
     /**
-     * Prepare Data.
+     * Get Data.
      * 
      * @since  1.0.0
      * @access public
      * 
      * @return array
      */
-    public function prepare_data() {
+    public function get_data() {
         // Get queried object ID.
         $id = get_queried_object_id();
         
@@ -146,18 +116,6 @@ class DataLayer {
 
         // Return the prepared data.
         return $this->data;
-    }
-
-    /**
-     * Get JSON formatted data.
-     * 
-     * @since  1.0.0
-     * @access public
-     * 
-     * @return string
-     */
-    public function get_json_data() {
-        return wp_json_encode( $this->prepare_data() );
     }
 
     /**
