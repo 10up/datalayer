@@ -129,7 +129,7 @@ class DataLayer {
      * @return string
      */
     public function get_author_name( $author_id ) {
-        return $author_id;
+        return get_the_author_meta( 'display_name', $author_id );
     }
 
     /**
