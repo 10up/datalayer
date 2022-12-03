@@ -6,6 +6,20 @@ For example, you would like to use the datalayer to send data of the page/post t
 
 <hr/>
 
+## Parameters
+| # |   Name   |  Description |
+|----------|:-------------|:------|
+| 1 | title      | Title of the post               |
+| 2 | url        | URL of the post                 |
+| 3 | author     | Author of the post              |
+| 4 | template   | Template Type of the post       |
+| 5 | categories | Categories assigned to the post |
+| 6 | tags       | Tags assigned to the post       |
+| 7 | post_type  | Post Type of the post           |
+| 8 | publish_date | Publish date of the post      |
+
+<hr/>
+
 ##  Usage Instructions
 
 There are multiple ways using which you can install datalayer to your project.
