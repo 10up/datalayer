@@ -9,14 +9,15 @@ For example, you would like to use the datalayer to send data of the page/post t
 ## Parameters
 | # |   Name   |  Description |
 |----------|:-------------|:------|
-| 1 | title      | Title of the post               |
-| 2 | url        | URL of the post                 |
-| 3 | author     | Author of the post              |
-| 4 | template   | Template Type of the post       |
-| 5 | categories | Categories assigned to the post |
-| 6 | tags       | Tags assigned to the post       |
-| 7 | post_type  | Post Type of the post           |
-| 8 | publish_date | Publish date of the post      |
+| 1 | id         | ID of the post                  |
+| 2 | title      | Title of the post               |
+| 3 | url        | URL of the post                 |
+| 4 | author     | Author of the post              |
+| 5 | template   | Template Type of the post       |
+| 6 | categories | Categories assigned to the post |
+| 7 | tags       | Tags assigned to the post       |
+| 8 | post_type  | Post Type of the post           |
+| 9 | publish_date | Publish date of the post      |
 
 <hr/>
 
