@@ -171,16 +171,16 @@ class DataLayer {
 	 * @return void
 	 */
 	public function get_singular_data( $object_id ) {
-		$post          = get_post( $object_id );
-
+		$post       = get_post( $object_id );
 		$this->data = [
-			'id'           => $object_id,
-			'title'        => $post->post_title,
-			'url'          => get_the_permalink( $object_id ),
-			'post_type'    => get_post_type( $object_id ),
-			'template'     => 'single',
-			'author'       => $this->get_author_name( $post->post_author ),
-			'publish_date' => $this->get_publish_date( $object_id ),
+			'id'            => $object_id,
+			'title'         => $post->post_title,
+			'url'           => get_the_permalink( $object_id ),
+			'post_type'     => get_post_type( $object_id ),
+			'template'      => 'single',
+			'author'        => $this->get_author_name( $post->post_author ),
+			'publish_date'  => $this->get_publish_date( $object_id ),
+			'post_modified' => $this->get_post_modified_date( $object_id ),
 		];
 
 		$this->add_post_taxonomy_data( $object_id );
@@ -210,7 +210,7 @@ class DataLayer {
 				$terms = get_the_terms( $object_id, $type );
 
 				foreach ( $terms as $term ) {
-					$this->data[ $type ][] = $term->name;
+					$this->data[ $type ][] = apply_filters( 'tenup_datalayer_taxonomy_' . $type . '_name', $term->name, $term );
 				}
 			}
 		}
@@ -227,7 +227,7 @@ class DataLayer {
 	 * @return string
 	 */
 	public function get_author_name( $author_id ) {
-		return get_the_author_meta( 'display_name', $author_id );
+		return apply_filters( 'tenup_datalayer_author_name', get_the_author_meta( 'display_name', $author_id ), $author_id );
 	}
 
 	/**
@@ -236,12 +236,26 @@ class DataLayer {
 	 * @since  1.0.0
 	 * @access public
 	 * 
-	 * @param int $id ID.
+	 * @param int $object_id ID.
 	 * 
 	 * @return string
 	 */
-	public function get_publish_date( $id ) {
-		return apply_filters( 'tenup_datalayer_publish_date', get_the_date( $this->get_date_format(), $id ) );
+	public function get_publish_date( $object_id ) {
+		return apply_filters( 'tenup_datalayer_publish_date', get_the_date( $this->get_date_format(), $object_id ) );
+	}
+
+	/**
+	 * Get the Last Modified Date.
+	 * 
+	 * @since  1.0.0
+	 * @access public
+	 * 
+	 * @param int $object_id ID.
+	 * 
+	 * @return string
+	 */
+	public function get_post_modified_date( $object_id ) {
+		return apply_filters( 'tenup_datalayer_updated_date', get_the_modified_date( $this->get_date_format(), $object_id ) );
 	}
 
 	/**
