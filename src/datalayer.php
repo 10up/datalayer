@@ -56,61 +56,26 @@ class DataLayer {
      * @return array
      */
     public function get_data() {
-        // Get queried object ID.
-        $id = get_queried_object_id();
-        
-        // Assign the object ID to the datalayer data.
-        $this->data['id'] = $id;
+
+        $object_id = get_queried_object_id() ?? 0;
         
         if ( is_archive() ) {
-            $term = get_term( $id );
-            
-            $this->data['title'] = $term->name;
-            $this->data['url'] = get_term_link( $id );
-            $this->data['author'] = 0;
-            
-            if ( is_category() ) {
-                $this->data['template'] = 'category';
-            } elseif ( is_tag() ) {
-                $this->data['template'] = 'tag';
-            } elseif ( is_author() ) {
-                $this->data['template'] = 'author';
-            } elseif ( is_post_type_archive() ) {
-                $this->data['template'] = 'post_type';
-            }
+            $this->get_archive_data( $object_id );
         } elseif ( is_404() ) {
-            global $wp;
-
-            $this->data = [
-                'title'    => '404',
-                'url'      => home_url( $wp->request ),
-                'author'   => 0,
-                'template' => '404',
-            ];
-        } else {
-            $post = get_post( $id );
-            $taxonomy_data = $this->get_taxonomy_data( $id );
-            
-            if ( is_front_page() || is_home() ) {
-                $this->data['template'] = 'home';
-            } elseif ( is_singular() ) {
-                $this->data['title']      = $post->post_title;
-                $this->data['url']        = get_the_permalink( $id );
-                $this->data['categories'] = ! empty( $taxonomy_data['category'] ) ? $taxonomy_data['category'] : '';
-                $this->data['tags']       = ! empty( $taxonomy_data['post_tag'] ) ? $taxonomy_data['post_tag'] : '';
-                $this->data['post_type']  = get_post_type( $id );
-                $this->data['template']   = 'single';
-                $this->data['author']     = $this->get_author_name( $post->post_author );
-            }
+            $this->get_404_data();
+        } elseif ( is_search() ) {
+            $this->get_search_data();
+        } elseif ( is_front_page() || is_home() ) {
+            $this->get_homepage_data();
+        } elseif ( is_singular() ) {
+            $this->get_singular_data( $object_id );
         }
-    
-        // Assign publish date to the datalayer data.
-        $this->data['publish_date'] = $this->get_publish_date( $id );
 
         /**
          * Data values of datalayer.
          * 
-         * @since 1.0.0
+         * @since  1.0.0
+         * @access public
          */
         $this->data = apply_filters( 'tenup_datalayer_data_values', $this->data );
 
@@ -119,12 +84,145 @@ class DataLayer {
     }
 
     /**
-     * Get Author Name by ID.
-     * 
-     * @param int $author_id Author ID.
+     * Get WordPress Archive Data.
      * 
      * @since  1.0.0
      * @access public
+     *
+     * @param int $object_id Object ID.
+     * @return void
+     */
+    public function get_archive_data( $object_id ) {
+        $term = get_term( $object_id );
+
+        $this->data = [
+            'id'       => $object_id,
+            'title'    => $term->name,
+            'url'      => get_term_link( $id ),
+            'author'   => 0,
+            'template' => 'archive',
+        ];
+    }
+
+    /**
+     * Get WordPress 404 Data.
+     * 
+     * @since  1.0.0
+     * @access public
+     *
+     * @param int $object_id Object ID.
+     * @return void
+     */
+    public function get_404_data() {
+        global $wp;
+
+        $this->data = [
+            'title'    => '404',
+            'url'      => home_url( $wp->request ),
+            'author'   => 0,
+            'template' => '404',
+        ];
+    }
+
+    /**
+     * Get WordPress Search Results Data.
+     * 
+     * @since  1.0.0
+     * @access public
+     *
+     * @param int $object_id Object ID.
+     * @return void
+     */
+    public function get_search_data() {
+        global $wp;
+
+        $this->data = [
+            'title'    => 'Search',
+            'url'      => home_url( $wp->request ),
+            'author'   => 0,
+            'template' => 'search',
+        ];
+    }
+
+    /**
+     * Get WordPress Homepage Data.
+     * 
+     * @since  1.0.0
+     * @access public
+     *
+     * @param int $object_id Object ID.
+     * @return void
+     */
+    public function get_homepage_data() {
+        $this->data = [
+            'title'    => 'Homepage',
+            'url'      => home_url( $wp->request ),
+            'template' => 'home',
+        ];
+    }
+
+    /**
+     * Get WordPress Singluarl Post Data.
+     * 
+     * @since  1.0.0
+     * @access public
+     *
+     * @param int $object_id Object ID.
+     * @return void
+     */
+    public function get_singular_data( $object_id ) {
+        $post          = get_post( $object_id );
+
+        $this->data = [
+            'id'           => $object_id,
+            'title'        => $post->post_title,
+            'url'          => get_the_permalink( $object_id ),
+            'post_type'    => get_post_type( $object_id ),
+            'template'     => 'single',
+            'author'       => $this->get_author_name( $post->post_author ),
+            'publish_date' => $this->get_publish_date( $object_id ),
+        ];
+
+        $this->add_post_taxonomy_data( $object_id );
+    }
+
+    /**
+     * Get the taxonomy data for a post.
+     * 
+     * @since  1.0.0
+     * @access public
+     *
+     * @param int $object_id Object ID.
+     * @return void
+     */
+    public function add_post_taxonomy_data( $object_id ) {
+
+        // Setup Taxonomy Data.
+        $taxonomies = get_taxonomies();
+
+        $excluded_taxonomies = apply_filters( 'tenup_datalayer_exclude_taxonomies', 
+            ['nav_menu', 'link_category', 'post_format', 'wp_theme', 'wp_template_part_area']
+        );
+        
+        foreach( $taxonomies as $type => $taxonomy ) {
+
+            if ( ! in_array( $type, $excluded_taxonomies ) ) {
+                $terms = get_the_terms( $object_id, $type );
+
+                foreach ( $terms as $term ) {
+                    $this->data[ $type ][] = $term->name;
+                }
+            }
+        }
+    }
+
+    /**
+     * Get Author Name by ID.
+     * 
+     * @since  1.0.0
+     * @access public
+     * 
+     * @param int $author_id Author ID.
      * 
      * @return string
      */
@@ -135,10 +233,10 @@ class DataLayer {
     /**
      * Get Publish Date.
      * 
-     * @param int $id ID.
-     * 
      * @since  1.0.0
      * @access public
+     * 
+     * @param int $id ID.
      * 
      * @return string
      */
@@ -156,24 +254,5 @@ class DataLayer {
      */
     public function get_date_format() {
         return apply_filters( 'tenup_datalayer_date_format', get_option('date_format') );
-    }
-
-    /**
-     * Get Taxonomy data.
-     * 
-     * @since  1.0.0
-     * @access public
-     * 
-     * @return array
-     */
-    public function get_taxonomy_data( $id ) {
-        // Setup Taxonomy Data.
-        $taxonomies = get_taxonomies();
-        
-        foreach( $taxonomies as $type => $taxonomy ) {
-            $object_terms[ $type ] = wp_get_object_terms( $id, $type );
-        }
-
-        return $object_terms;
     }
 }
