@@ -20,9 +20,27 @@ function setup() {
 	add_filter( 'render_block_core/button', $n( 'render' ), 10, 3 );
 }
 
+/**
+ * Update the block content to include tracking attributes
+ *
+ * @param string $block_content The block content about to be rendered.
+ * @param array $block The block data being rendered.
+ * @param WP_Block $instance The block instance being rendered.
+ * @return void
+ */
 function render( $block_content, $block, $instance ) {
-	var_dump($block_content);
-	exit;
-	$block_content = str_replace( 'wp-block-button', 'wp-block-button button', $block_content );
+
+	$block_content = new \WP_HTML_Tag_Processor( $block_content );
+
+	if ( $block_content->next_tag( array( 'class_name' => 'wp-element-button' ) ) ) {
+
+		$cta_text    = trim( strip_tags( $block['innerContent'][0] ) ) ?? '';
+		$destination = $block_content->get_attribute( 'href' ) ?? '';
+
+		$block_content->set_attribute( 'data-event', 'button' );
+		$block_content->set_attribute( 'data-ctaText', $cta_text );
+		$block_content->set_attribute( 'data-destinationLink', $destination );
+	}
+
 	return $block_content;
 }

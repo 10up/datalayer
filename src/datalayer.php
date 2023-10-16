@@ -201,7 +201,7 @@ class DataLayer {
 		$taxonomies = get_taxonomies();
 
 		$excluded_taxonomies = apply_filters( 'tenup_datalayer_exclude_taxonomies', 
-			['nav_menu', 'link_category', 'post_format', 'wp_theme', 'wp_template_part_area']
+			['author','nav_menu', 'link_category', 'post_format', 'wp_theme', 'wp_template_part_area']
 		);
 		
 		foreach( $taxonomies as $type => $taxonomy ) {
