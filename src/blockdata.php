@@ -9,6 +9,9 @@
 
 namespace TenUp\DataLayer;
 
+define( 'THEME_DATALAYER_TEMPLATE_URL', get_template_directory_uri() );
+define( 'THEME_DATALAYER_SRC_URL', THEME_DATALAYER_TEMPLATE_URL . '/vendor/10up/datalayer/src' );
+
 /**
  * DataLayer Class
  */
@@ -33,6 +36,7 @@ class BlockData {
 	 */
 	public function __construct() {
 		$this->add_block_data();
+		$this->register_scripts();
 	}
 
 	/**
@@ -114,5 +118,19 @@ class BlockData {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Register tracking scripts.
+	 * 
+	 * @since  1.0.0
+	 * @access public
+	 * 
+	 * @return void
+	 */
+	public function register_scripts() {
+		// var_dump( THEME_DATALAYER_DIST_URL . 'assets/js/frontend.js' );
+		// exit;
+		wp_enqueue_script( 'tenup-datalayer', THEME_DATALAYER_SRC_URL . '/js/frontend.js', array(), '1.0.0', true );
 	}
 }
