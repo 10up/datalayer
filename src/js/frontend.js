@@ -15,6 +15,15 @@ function sendGTMEvent(element) {
 		return acc;
 	}, {});
 
+	/**
+	 * If the ctaText is not set, use the innerText of the element.
+	 * WP_HTML_Tag_Processor is limited in what it can do, so we can't
+	 * assign the data-ctaText attribute.
+	 */
+	if (!data.ctaText) {
+		data.ctaText = element.innerText.trim();
+	}
+
 	window.dataLayer = window.dataLayer || [];
 	window.dataLayer.push({ data });
 }
