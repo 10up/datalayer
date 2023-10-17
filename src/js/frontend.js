@@ -32,12 +32,33 @@ function sendGTMEvent(element) {
  * Add event listeners to the document.
  */
 document.addEventListener('DOMContentLoaded', () => {
+	// Add event listeners to all elements with a data-event attribute.
 	document.addEventListener('click', function (event) {
 		const clickedElement = event.target;
 		const dataEvent = clickedElement.getAttribute('data-event');
 
 		if (dataEvent) {
 			sendGTMEvent(clickedElement);
+		}
+	});
+
+	// Add event listeners to all internal links without a data-event attribute.
+	const hyperLinks = document.querySelectorAll('a:not([data-event])'); // Select only links without data-event attribute.
+	hyperLinks.forEach((link) => {
+		// Check if it's an internal link.
+		if (link.host === window.location.host) {
+			link.addEventListener('click', () => {
+				const ctaText = link.innerText;
+				const destinationLink = link.href;
+
+				window.dataLayer = window.dataLayer || [];
+				window.dataLayer.push({
+					event: 'recirculation',
+					module: 'hyperlink',
+					ctaText,
+					destinationLink,
+				});
+			});
 		}
 	});
 });
