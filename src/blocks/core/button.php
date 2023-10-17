@@ -21,7 +21,7 @@ function setup() {
 }
 
 /**
- * Update the block content to include tracking attributes
+ * Add tracking to button blocks.
  *
  * @param string $block_content The block content about to be rendered.
  * @param array $block The block data being rendered.

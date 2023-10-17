@@ -35,8 +35,35 @@ class BlockData {
 	 * @return void
 	 */
 	public function __construct() {
-		$this->add_block_data();
+		$this->add_navigation_tracking();
+		$this->add_block_tracking();
 		$this->register_scripts();
+	}
+
+	/**
+	 * Register navigation tracking filters.
+	 *
+	 * @return void
+	 */
+	public function add_navigation_tracking() {
+		add_filter( 'nav_menu_link_attributes', [ $this, 'navigation_tracking' ], 10, 3 );
+	}
+
+	/**
+	 * Add tracking attributes to all menu items.
+	 * 
+	 * @since  1.0.0
+	 * @access public
+	 * 
+	 * @return void
+	 */
+	public function navigation_tracking( $atts, $item, $args ) {
+		
+		$atts['data-event']           = str_contains( $args->theme_location, 'footer' ) ? 'footer' : 'navigation';
+		$atts['data-ctaText']         = $item->title ?? '';
+		$atts['data-destinationLink'] = $atts['href'] ?? '';
+
+		return $atts;
 	}
 
 	/**
@@ -47,7 +74,7 @@ class BlockData {
 	 * 
 	 * @return void
 	 */
-	public function add_block_data() {
+	public function add_block_tracking() {
 
 		// Get all files withing the blocks folder
 		// $blocks = scandir( __DIR__ . '/blocks' );
@@ -129,8 +156,6 @@ class BlockData {
 	 * @return void
 	 */
 	public function register_scripts() {
-		// var_dump( THEME_DATALAYER_DIST_URL . 'assets/js/frontend.js' );
-		// exit;
 		wp_enqueue_script( 'tenup-datalayer', THEME_DATALAYER_SRC_URL . '/js/frontend.js', array(), '1.0.0', true );
 	}
 }
