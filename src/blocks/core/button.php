@@ -1,6 +1,6 @@
 <?php
 /**
- * Gutenberg Blocks setup
+ * Bind the data to the block
  *
  * @package TenUp\DataLayer
  */
@@ -40,6 +40,7 @@ function render( $block_content, $block, $instance ) {
 		$block_content->set_attribute( 'data-event', 'button' );
 		$block_content->set_attribute( 'data-ctaText', $cta_text );
 		$block_content->set_attribute( 'data-destinationLink', $destination );
+		$block_content->get_updated_html();
 	}
 
 	return $block_content;
