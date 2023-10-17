@@ -18,6 +18,7 @@ For example, you would like to use the datalayer to send data of the page/post t
 | 7 | tags       | Tags assigned to the post       |
 | 8 | post_type  | Post Type of the post           |
 | 9 | publish_date | Publish date of the post      |
+| 10 | post_modified | Last modified date          |
 
 <hr/>
 

@@ -17,6 +17,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once __DIR__ . '/vendor/autoload.php';
 
 /**
+ * Enqueue the block data class.
+ *
+ * @return void
+ */
+function add_block_data() {
+	new \TenUp\DataLayer\BlockData();
+}
+add_action( 'wp_loaded', __NAMESPACE__ . 'add_block_data' );
+
+
+/**
  * 
  */
 function header_section() {
@@ -25,7 +36,6 @@ function header_section() {
     
     // Use `$datalayer` parameters based on your need.
 }
-
 add_action( 'wp_head', __NAMESPACE__ . '\header_section' );
 
 /**
@@ -43,7 +53,4 @@ function enqueue_scripts() {
     wp_enqueue_script( 'datalayer-test', plugins_url( '/ad-datalayer/test.js' ) );
     wp_localize_script( 'datalayer-test', 'datalayerArgs', $datalayer );
 }
-
 add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\enqueue_scripts' ); 
-
-
