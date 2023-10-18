@@ -4,6 +4,13 @@ This composer package is intended to prepare a datalayer with basic set of value
 
 For example, you would like to use the datalayer to send data of the page/post to GTM ads.
 
+Features include:
+ * Automated event targeting for:
+     * Button Block clicks
+     * Clickable image blocks
+     * Query Block recirculation events
+     * Post Terms block recirculation events
+
 <hr/>
 
 ## Parameters
