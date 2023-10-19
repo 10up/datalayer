@@ -7,7 +7,7 @@
  * @package 10up
  */
 
-namespace TenUp\BlockData;
+namespace TenUp\Blockdata;
 
 define( 'THEME_DATALAYER_TEMPLATE_URL', get_template_directory_uri() );
 define( 'THEME_DATALAYER_SRC_URL', THEME_DATALAYER_TEMPLATE_URL . '/vendor/10up/datalayer/src' );
