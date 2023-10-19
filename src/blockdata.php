@@ -1,13 +1,13 @@
 <?php
 /**
- * BlockData class file.
+ * Blockdata class file.
  * 
  * @since 1.0.0
  * 
  * @package 10up
  */
 
-namespace TenUp\Blockdata;
+namespace TenUp\Datalayer;
 
 define( 'THEME_DATALAYER_TEMPLATE_URL', get_template_directory_uri() );
 define( 'THEME_DATALAYER_SRC_URL', THEME_DATALAYER_TEMPLATE_URL . '/vendor/10up/datalayer/src' );
@@ -15,7 +15,7 @@ define( 'THEME_DATALAYER_SRC_URL', THEME_DATALAYER_TEMPLATE_URL . '/vendor/10up/
 /**
  * DataLayer Class
  */
-class BlockData {
+class Blockdata {
 	/**
 	 * Data.
 	 * 

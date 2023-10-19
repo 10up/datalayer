@@ -1,6 +1,6 @@
 <?php
 /**
- * DataLayer class file.
+ * Datalayer class file.
  * 
  * @since 1.0.0
  * 
@@ -12,7 +12,7 @@ namespace TenUp\Datalayer;
 /**
  * DataLayer Class
  */
-class DataLayer {
+class Datalayer {
 	/**
 	 * Data.
 	 * 
