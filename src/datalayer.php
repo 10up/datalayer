@@ -31,7 +31,9 @@ class DataLayer {
 	 * 
 	 * @return void
 	 */
-	public function __construct() {}
+	public function __construct() {
+		$this->add_gtm_tag();
+	}
 
 	/**
 	 * Setup Datalayer.
@@ -58,6 +60,8 @@ class DataLayer {
 	public function get_data() {
 
 		$object_id = get_queried_object_id() ?? 0;
+
+		$this->get_global_data();
 		
 		if ( is_archive() ) {
 			$this->get_archive_data( $object_id );
@@ -84,6 +88,43 @@ class DataLayer {
 	}
 
 	/**
+	 * Get globalized data.
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 *
+	 * @return void
+	 */
+	public function get_global_data() {
+		$this->data += [
+			'environment' => wp_get_environment_type(),
+		];
+
+		$this->get_utm_parameters();
+	}
+
+	/**
+	 * Get UTM Parameters.
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 * 
+	 * @return void
+	 */
+	public function get_utm_parameters() {
+		$utm_parameters = [
+			'utm_source',
+			'utm_medium',
+		];
+
+		foreach ( $utm_parameters as $parameter ) {
+			if ( isset( $_GET[ $parameter ] ) ) {
+				$this->data[ $parameter ] = sanitize_text_field( wp_unslash( $_GET[ $parameter ] ) );
+			}
+		}
+	}
+
+	/**
 	 * Get WordPress Archive Data.
 	 * 
 	 * @since  1.0.0
@@ -95,12 +136,13 @@ class DataLayer {
 	public function get_archive_data( $object_id ) {
 		$term = get_term( $object_id );
 
-		$this->data = [
-			'id'       => $object_id,
-			'title'    => $term->name,
-			'url'      => get_term_link( $id ),
-			'author'   => 0,
-			'template' => 'archive',
+		$this->data += [
+			'id'            => $object_id,
+			'title'         => $term->name,
+			'url'           => get_term_link( $id ),
+			'author'        => 0,
+			'template'      => 'archive',
+			$term->taxonomy => $term->name,
 		];
 	}
 
@@ -116,7 +158,7 @@ class DataLayer {
 	public function get_404_data() {
 		global $wp;
 
-		$this->data = [
+		$this->data += [
 			'title'    => '404',
 			'url'      => home_url( $wp->request ),
 			'author'   => 0,
@@ -136,7 +178,7 @@ class DataLayer {
 	public function get_search_data() {
 		global $wp;
 
-		$this->data = [
+		$this->data += [
 			'title'    => 'Search',
 			'url'      => home_url( $wp->request ),
 			'author'   => 0,
@@ -154,7 +196,7 @@ class DataLayer {
 	 * @return void
 	 */
 	public function get_homepage_data() {
-		$this->data = [
+		$this->data += [
 			'title'    => 'Homepage',
 			'url'      => home_url( $wp->request ),
 			'template' => 'home',
@@ -172,7 +214,7 @@ class DataLayer {
 	 */
 	public function get_singular_data( $object_id ) {
 		$post       = get_post( $object_id );
-		$this->data = [
+		$this->data += [
 			'id'            => $object_id,
 			'title'         => $post->post_title,
 			'url'           => get_the_permalink( $object_id ),
@@ -268,5 +310,36 @@ class DataLayer {
 	 */
 	public function get_date_format() {
 		return apply_filters( 'tenup_datalayer_date_format', get_option('date_format') );
+	}
+
+	/**
+	 * Add the GTM tag.
+	 * 
+	 * @since  1.0.0
+	 * @access public
+	 * 
+	 * @return void
+	 */
+	public function add_gtm_tag() {
+
+		if ( is_admin() ) {
+			return;
+		}
+
+		$gtm_id = apply_filters( 'tenup_datalayer_gtm_id', false );
+
+		if ( empty( $gtm_id ) ) {
+			return;
+		}
+
+		wp_enqueue_script(
+			'tenup-datalayer-gtm',
+			'https://www.googletagmanager.com/gtm.js?id=' . esc_attr( $gtm_id ),
+			array(),
+			'1.0.0',
+			[
+				'strategy' => 'async',
+			]
+		);
 	}
 }

@@ -28,6 +28,33 @@ function sendGTMEvent(element) {
 	window.dataLayer.push({ data });
 }
 
+// Main function to handle UTM parameters
+function handleUTMParameters() {
+	const params = ['utm_source', 'utm_medium'];
+
+	params.forEach((param) => {
+		const value = window.tenupDataLayer[param];
+		const sessionValue = JSON.parse(sessionStorage.getItem(param));
+
+		if (value) {
+			sessionStorage.setItem(param, JSON.stringify({ [param]: value }));
+		}
+
+		if (sessionValue && !window.tenupDataLayer[param]) {
+			window.tenupDataLayer[param] = sessionValue[param];
+		}
+	});
+}
+
+function assignTenupDataLayer() {
+	const tenupDataLayer = window.tenupDataLayer || [];
+
+	Object.keys(tenupDataLayer).forEach((key) => {
+		window.dataLayer = window.dataLayer || [];
+		window.dataLayer.push({ [key]: tenupDataLayer[key] });
+	});
+}
+
 /**
  * Add event listeners to the document.
  */
@@ -62,3 +89,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	});
 });
+
+handleUTMParameters();
+assignTenupDataLayer();

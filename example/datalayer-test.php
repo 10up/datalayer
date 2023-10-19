@@ -51,6 +51,6 @@ function enqueue_scripts() {
 
     // Enqueue and Localize script where you would like to use the `$datalayer` parameters.
     wp_enqueue_script( 'datalayer-test', plugins_url( '/ad-datalayer/test.js' ) );
-    wp_localize_script( 'datalayer-test', 'datalayerArgs', $datalayer );
+    wp_localize_script( 'datalayer-test', 'tenupDataLayer', $datalayer );
 }
 add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\enqueue_scripts' ); 
