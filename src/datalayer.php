@@ -31,7 +31,9 @@ class DataLayer {
 	 * 
 	 * @return void
 	 */
-	public function __construct() {}
+	public function __construct() {
+		$this->add_gtm_tag();
+	}
 
 	/**
 	 * Setup Datalayer.
@@ -97,6 +99,29 @@ class DataLayer {
 		$this->data += [
 			'environment' => wp_get_environment_type(),
 		];
+
+		$this->get_utm_parameters();
+	}
+
+	/**
+	 * Get UTM Parameters.
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 * 
+	 * @return void
+	 */
+	public function get_utm_parameters() {
+		$utm_parameters = [
+			'utm_source',
+			'utm_medium',
+		];
+
+		foreach ( $utm_parameters as $parameter ) {
+			if ( isset( $_GET[ $parameter ] ) ) {
+				$this->data[ $parameter ] = sanitize_text_field( wp_unslash( $_GET[ $parameter ] ) );
+			}
+		}
 	}
 
 	/**
@@ -285,5 +310,32 @@ class DataLayer {
 	 */
 	public function get_date_format() {
 		return apply_filters( 'tenup_datalayer_date_format', get_option('date_format') );
+	}
+
+	/**
+	 * Add the GTM tag.
+	 * 
+	 * @since  1.0.0
+	 * @access public
+	 * 
+	 * @return void
+	 */
+	public function add_gtm_tag() {
+
+		$gtm_id = apply_filters( 'tenup_datalayer_gtm_id', false );
+
+		if ( empty( $gtm_id ) ) {
+			return;
+		}
+
+		wp_enqueue_script(
+			'tenup-datalayer-gtm',
+			'https://www.googletagmanager.com/gtm.js?id=' . esc_attr( $gtm_id ),
+			array(),
+			'1.0.0',
+			[
+				'strategy' => 'async',
+			]
+		);
 	}
 }
