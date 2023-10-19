@@ -322,6 +322,10 @@ class DataLayer {
 	 */
 	public function add_gtm_tag() {
 
+		if ( is_admin() ) {
+			return;
+		}
+
 		$gtm_id = apply_filters( 'tenup_datalayer_gtm_id', false );
 
 		if ( empty( $gtm_id ) ) {

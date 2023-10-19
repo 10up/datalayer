@@ -156,6 +156,10 @@ class BlockData {
 	 * @return void
 	 */
 	public function register_scripts() {
+		if ( is_admin() ) {
+			return;
+		}
+
 		wp_enqueue_script( 'tenup-datalayer', THEME_DATALAYER_SRC_URL . '/js/frontend.js', array(), '1.0.0', true );
 	}
 }
