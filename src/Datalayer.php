@@ -98,6 +98,19 @@ class Datalayer {
 	public function get_global_data() {
 		$this->data += [
 			'environment' => wp_get_environment_type(),
+			'trackingAttrs' => apply_filters( 
+				'tenup_datalayer_tracking_attrs',
+					[
+						'data-event',
+						'data-ctaText',
+						'data-destinationLink',
+						'data-module',
+						'data-prodBrnd',
+						'data-prodName',
+						'data-prodPrice',
+						`data-cmpAction`,
+					]
+				),
 		];
 
 		$this->get_utm_parameters();

@@ -4,7 +4,7 @@
  * @param {HTMLElement} element The element that was clicked.
  */
 function sendGTMEvent(element) {
-	const attributeList = ['data-event', 'data-ctaText', 'data-destinationLink', 'data-module'];
+	const attributeList = window.tenupDataLayer.attributes || [];
 
 	const data = attributeList.reduce((acc, attribute) => {
 		const value = element.getAttribute(attribute);
