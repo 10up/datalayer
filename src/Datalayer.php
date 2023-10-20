@@ -108,7 +108,8 @@ class Datalayer {
 						'data-prodBrnd',
 						'data-prodName',
 						'data-prodPrice',
-						`data-cmpAction`,
+						'data-cmpAction',
+						'data-superlative'
 					]
 				),
 		];
