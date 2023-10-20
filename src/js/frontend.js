@@ -4,7 +4,7 @@
  * @param {HTMLElement} element The element that was clicked.
  */
 function sendGTMEvent(element) {
-	const attributeList = ['data-event', 'data-ctaText', 'data-destinationLink'];
+	const attributeList = ['data-event', 'data-ctaText', 'data-destinationLink', 'data-module'];
 
 	const data = attributeList.reduce((acc, attribute) => {
 		const value = element.getAttribute(attribute);
@@ -26,6 +26,8 @@ function sendGTMEvent(element) {
 
 	window.dataLayer = window.dataLayer || [];
 	window.dataLayer.push({ data });
+	console.log('GTM Event:');
+	console.log(data);
 }
 
 // Main function to handle UTM parameters

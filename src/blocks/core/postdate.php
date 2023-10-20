@@ -5,7 +5,7 @@
  * @package TenUp\DataLayer
  */
 
-namespace TenUp\DataLayer\Blocks\Core\PostTerms;
+namespace TenUp\DataLayer\Blocks\Core\PostDate;
 
 /**
  * Set up blocks
@@ -17,7 +17,7 @@ function setup() {
 		return __NAMESPACE__ . "\\$function";
 	};
 
-	add_filter( 'render_block_core/post-terms', $n( 'render' ), 10, 3 );
+	add_filter( 'render_block_core/post-date', $n( 'render' ), 10, 3 );
 }
 
 /**
@@ -32,7 +32,8 @@ function render( $block_content, $block, $instance ) {
 
 	$block_content = new \WP_HTML_Tag_Processor( $block_content );
 
-	while ( $block_content->next_tag( [ 'tag_name' => 'a', 'tag_closers' => 'skip' ] ) ) {
+	if ( $block_content->next_tag( 'a' ) ) {
+
 		$destination = $block_content->get_attribute( 'href' ) ?? '';
 
 		$block_content->set_attribute( 'data-event', 'recirculation' );
