@@ -139,8 +139,8 @@ class Datalayer {
 		$this->data += [
 			'id'            => $object_id,
 			'title'         => $term->name,
+			'page'          => $term->slug,
 			'url'           => get_term_link( $id ),
-			'author'        => 0,
 			'template'      => 'archive',
 			$term->taxonomy => $term->name,
 		];
@@ -161,7 +161,6 @@ class Datalayer {
 		$this->data += [
 			'title'    => '404',
 			'url'      => home_url( $wp->request ),
-			'author'   => 0,
 			'template' => '404',
 		];
 	}
@@ -181,7 +180,6 @@ class Datalayer {
 		$this->data += [
 			'title'    => 'Search',
 			'url'      => home_url( $wp->request ),
-			'author'   => 0,
 			'template' => 'search',
 		];
 	}
@@ -217,6 +215,7 @@ class Datalayer {
 		$this->data += [
 			'id'            => $object_id,
 			'title'         => $post->post_title,
+			'page'          => $post->post_name,
 			'url'           => get_the_permalink( $object_id ),
 			'post_type'     => get_post_type( $object_id ),
 			'template'      => 'single',
