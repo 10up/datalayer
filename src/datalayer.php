@@ -7,7 +7,7 @@
  * @package 10up
  */
 
-namespace TenUp\Datalayer;
+namespace TenUp\DataLayer;
 
 /**
  * DataLayer Class
