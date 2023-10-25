@@ -26,8 +26,6 @@ function sendGTMEvent(element) {
 
 	window.dataLayer = window.dataLayer || [];
 	window.dataLayer.push(data);
-	console.log('GTM Event:');
-	console.log(data);
 }
 
 // Main function to handle UTM parameters
