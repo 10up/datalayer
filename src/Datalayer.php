@@ -129,6 +129,7 @@ class Datalayer {
 		$utm_parameters = [
 			'utm_source',
 			'utm_medium',
+			'utm_campaign'
 		];
 
 		foreach ( $utm_parameters as $parameter ) {
