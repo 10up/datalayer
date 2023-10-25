@@ -32,7 +32,7 @@ function sendGTMEvent(element) {
 
 // Main function to handle UTM parameters
 function handleUTMParameters() {
-	const params = ['utm_source', 'utm_medium', 'utm_campaign'];
+	const params = ['utm_source', 'utm_medium', 'utm_campaign', 'gclid', 'fbclid'];
 
 	params.forEach((param) => {
 		const value = window.tenupDataLayer[param];

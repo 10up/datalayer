@@ -109,7 +109,12 @@ class Datalayer {
 						'data-prodName',
 						'data-prodPrice',
 						'data-cmpAction',
-						'data-superlative'
+						'data-superlative',
+						'data-utm_source',
+						'data-utm_medium',
+						'data-utm_campaign',
+						'data-gclid',
+						'data-fbclid',
 					]
 				),
 		];
@@ -126,11 +131,7 @@ class Datalayer {
 	 * @return void
 	 */
 	public function get_utm_parameters() {
-		$utm_parameters = [
-			'utm_source',
-			'utm_medium',
-			'utm_campaign'
-		];
+		$utm_parameters  = ['utm_source', 'utm_medium', 'utm_campaign', 'gclid', 'fbclid'];
 
 		foreach ( $utm_parameters as $parameter ) {
 			if ( isset( $_GET[ $parameter ] ) ) {
