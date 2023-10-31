@@ -32,7 +32,7 @@ class Datalayer {
 	 * @return void
 	 */
 	public function __construct() {
-		$this->add_gtm_tag();
+		add_action( 'wp_head', [ $this, 'gtm_head_script' ], 10, 3 );
 	}
 
 	/**
@@ -115,11 +115,12 @@ class Datalayer {
 						'data-utm_campaign',
 						'data-gclid',
 						'data-fbclid',
+						'data-prodId',
 					]
 				),
 		];
 
-		$this->get_utm_parameters();
+		$this->get_parameters();
 	}
 
 	/**
@@ -130,12 +131,20 @@ class Datalayer {
 	 * 
 	 * @return void
 	 */
-	public function get_utm_parameters() {
-		$utm_parameters  = ['utm_source', 'utm_medium', 'utm_campaign', 'gclid', 'fbclid'];
+	public function get_parameters() {
+		$parameters  = ['utm_source', 'utm_medium', 'utm_campaign', 'gclid', 'fbclid'];
 
-		foreach ( $utm_parameters as $parameter ) {
+		foreach ( $parameters as $parameter ) {
 			if ( isset( $_GET[ $parameter ] ) ) {
 				$this->data[ $parameter ] = sanitize_text_field( wp_unslash( $_GET[ $parameter ] ) );
+			}
+		}
+
+		$hashed_parameters = ['gclid', 'fbclid'];
+
+		foreach ( $hashed_parameters as $h_parameter ) {
+			if ( isset( $_GET[ $h_parameter ] ) ) {
+				$this->data[ $h_parameter ] = sanitize_text_field( md5( wp_unslash( $_GET[ $h_parameter ] ) ) );
 			}
 		}
 	}
@@ -210,6 +219,8 @@ class Datalayer {
 	 * @return void
 	 */
 	public function get_homepage_data() {
+		global $wp;
+
 		$this->data += [
 			'title'    => 'Homepage',
 			'url'      => home_url( $wp->request ),
@@ -316,45 +327,39 @@ class Datalayer {
 	}
 
 	/**
-	 * Get Date Format.
-	 * 
-	 * @since  1.0.0
-	 * @access public
-	 * 
-	 * @return string
+	 * Output Google Tag Manager script in head
 	 */
-	public function get_date_format() {
-		return apply_filters( 'tenup_datalayer_date_format', get_option('date_format') );
-	}
+	public function gtm_head_script(): void {
+		$account_id = apply_filters( 'tenup_datalayer_gtm_id', false );
 
-	/**
-	 * Add the GTM tag.
-	 * 
-	 * @since  1.0.0
-	 * @access public
-	 * 
-	 * @return void
-	 */
-	public function add_gtm_tag() {
-
-		if ( is_admin() ) {
+		if ( empty( $account_id ) ) {
 			return;
 		}
 
-		$gtm_id = apply_filters( 'tenup_datalayer_gtm_id', false );
+		$params_string = '';
+		// $gtm_auth      = get_option( GTM_AUTH_PARAM_STRING, false );
+		// $gtm_preview   = get_option( GTM_PREVIEW_PARAM_STRING, false );
 
-		if ( empty( $gtm_id ) ) {
-			return;
-		}
+		// if ( ! empty( $gtm_auth ) && ! empty( $gtm_preview ) ) {
+		// 	$params_string = sprintf(
+		// 		"+'&gtm_auth=%s&gtm_preview=%s&gtm_cookies_win=x'",
+		// 		esc_js( $gtm_auth ),
+		// 		esc_js( $gtm_preview )
+		// 	);
+		// }
+		?>
 
-		wp_enqueue_script(
-			'tenup-datalayer-gtm',
-			'https://www.googletagmanager.com/gtm.js?id=' . esc_attr( $gtm_id ),
-			array(),
-			'1.0.0',
-			[
-				'strategy' => 'async',
-			]
-		);
+		<!-- Google Tag Manager -->
+		<script>
+		(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+			new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+			j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+			'https://www.googletagmanager.com/gtm.js?id='+i+dl<?php echo $params_string; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Need the & in URL. ?>;f.parentNode.insertBefore(j,f);
+		})(window,document,'script','dataLayer','<?php echo esc_js( $account_id ); ?>');
+		</script>
+		<!-- End Google Tag Manager -->
+
+		<?php
 	}
+
 }
