@@ -37,7 +37,6 @@ class Blockdata {
 	public function __construct() {
 		$this->add_navigation_tracking();
 		$this->add_block_tracking();
-		$this->register_scripts();
 	}
 
 	/**
@@ -145,21 +144,5 @@ class Blockdata {
 		}
 
 		return false;
-	}
-
-	/**
-	 * Register tracking scripts.
-	 * 
-	 * @since  1.0.0
-	 * @access public
-	 * 
-	 * @return void
-	 */
-	public function register_scripts() {
-		if ( is_admin() ) {
-			return;
-		}
-
-		wp_enqueue_script( 'tenup-datalayer', THEME_DATALAYER_SRC_URL . '/js/frontend.js', array(), '1.0.0', true );
 	}
 }

@@ -32,21 +32,8 @@ class Datalayer {
 	 * @return void
 	 */
 	public function __construct() {
-		add_action( 'wp_head', [ $this, 'gtm_head_script' ], 10, 3 );
-	}
-
-	/**
-	 * Setup Datalayer.
-	 * 
-	 * @param string $return_type Return Type. Default: array | Supported values: `array` and `json`.
-	 * 
-	 * @since  1.0.0
-	 * @access public
-	 * 
-	 * @return void
-	 */
-	public function setup( $return_type = 'array' ) {
-		return $return_type === 'json' ? wp_json_encode( $this->get_data() ) : $this->get_data();
+		$this->register_scripts();
+		$this->header_scripts();
 	}
 
 	/**
@@ -339,6 +326,53 @@ class Datalayer {
 	}
 
 	/**
+	 * Localize the datalayer to the theme's script file.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	public function gtm_head_values() {
+		wp_localize_script(
+			'tenup-datalayer',
+			'tenupDataLayer',
+			$datalayer
+		);
+	}
+
+	/**
+	 * Register tracking scripts.
+	 * 
+	 * @since  1.0.0
+	 * @access public
+	 * 
+	 * @return void
+	 */
+	public function header_scripts() {
+		if ( is_admin() ) {
+			return;
+		}
+
+		add_action( 'wp_head', [ $this, 'gtm_head_values' ], 1, 3 );
+		add_action( 'wp_head', [ $this, 'gtm_head_script' ], 2, 3 );
+	}
+
+	/**
+	 * Register tracking scripts.
+	 * 
+	 * @since  1.0.0
+	 * @access public
+	 * 
+	 * @return void
+	 */
+	public function register_scripts() {
+		if ( is_admin() ) {
+			return;
+		}
+		wp_enqueue_script( 'tenup-datalayer', THEME_DATALAYER_SRC_URL . '/js/frontend.js', array(), '1.0.0', true );
+	}
+
+	/**
 	 * Output Google Tag Manager script in head
 	 */
 	public function gtm_head_script(): void {
@@ -347,6 +381,8 @@ class Datalayer {
 		if ( empty( $account_id ) ) {
 			return;
 		}
+
+		$data = wp_json_encode( $this->get_data() );
 
 		$params_string = '';
 
@@ -369,6 +405,8 @@ class Datalayer {
 
 		<!-- Google Tag Manager -->
 		<script>
+		window.dataLayer=window.dataLayer||[];
+		dataLayer.push(<?php echo $data ?>);
 		(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 			new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 			j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
