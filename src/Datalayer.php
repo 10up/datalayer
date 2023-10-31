@@ -326,21 +326,6 @@ class Datalayer {
 	}
 
 	/**
-	 * Localize the datalayer to the theme's script file.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return void
-	 */
-	public function gtm_head_values() {
-		wp_localize_script(
-			'tenup-datalayer',
-			'tenupDataLayer',
-			$datalayer
-		);
-	}
-
-	/**
 	 * Register tracking scripts.
 	 * 
 	 * @since  1.0.0
@@ -373,6 +358,53 @@ class Datalayer {
 	}
 
 	/**
+	 * Send the abstracted datalayer to GTM.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	public function gtm_head_values() {
+		$account_id = apply_filters( 'tenup_datalayer_gtm_id', false );
+
+		if ( empty( $account_id ) ) {
+			return;
+		}
+
+		// Get the data.
+		$data = wp_json_encode( $this->get_data() );
+		
+		?>
+		<script>
+		// Map the datalayer values before initiation.
+		window.dataLayer      = window.dataLayer || [];
+		window.tenupDataLayer = window.tenupDataLayer || [];
+		window.tenupDataLayer = <?php echo $data; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Need the & in URL. ?>;
+
+		// Set the session storage for the URL parameters.
+		const params = ['utm_source', 'utm_medium', 'utm_campaign', 'gclid', 'fbclid'];
+		params.forEach((param) => {
+			const value = window.tenupDataLayer[param];
+			console.log(value);
+			const sessionValue = JSON.parse(sessionStorage.getItem(param));
+
+			if (value) {
+				sessionStorage.setItem(param, JSON.stringify({ [param]: value }));
+			}
+
+			if (sessionValue && !window.tenupDataLayer[param]) {
+				window.tenupDataLayer[param] = sessionValue[param];
+			}
+		});
+		
+		// Push the abstracted datalayer to the GTM datalayer.
+		dataLayer.push(window.tenupDataLayer);
+
+		</script>
+		<?php
+	}
+
+	/**
 	 * Output Google Tag Manager script in head
 	 */
 	public function gtm_head_script(): void {
@@ -382,10 +414,7 @@ class Datalayer {
 			return;
 		}
 
-		$data = wp_json_encode( $this->get_data() );
-
 		$params_string = '';
-
 		// TODO: re-add these to the plugin.
 		// Create a settings page with this?
 		// https://gitlab.10up.com/10up-snippets/10up-snippets/-/blob/feature/analytics/analytics/gtm/gtm-mu-plugin.php
@@ -402,11 +431,12 @@ class Datalayer {
 		// }
 		
 		?>
-
-		<!-- Google Tag Manager -->
 		<script>
-		window.dataLayer=window.dataLayer||[];
-		dataLayer.push(<?php echo $data ?>);
+		// Map the datalayer values before initiation.
+		window.dataLayer      = window.dataLayer || [];
+
+		<?php do_action( 'tenup_datalayer_before_gtm_head_script' ); ?>
+
 		(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 			new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 			j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
@@ -417,5 +447,4 @@ class Datalayer {
 
 		<?php
 	}
-
 }
