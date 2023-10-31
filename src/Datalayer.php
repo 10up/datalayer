@@ -327,6 +327,18 @@ class Datalayer {
 	}
 
 	/**
+	 * Get Date Format.
+	 * 
+	 * @since  1.0.0
+	 * @access public
+	 * 
+	 * @return string
+	 */
+	public function get_date_format() {
+		return apply_filters( 'tenup_datalayer_date_format', get_option('date_format') );
+	}
+
+	/**
 	 * Output Google Tag Manager script in head
 	 */
 	public function gtm_head_script(): void {
@@ -337,6 +349,11 @@ class Datalayer {
 		}
 
 		$params_string = '';
+
+		// TODO: re-add these to the plugin.
+		// Create a settings page with this?
+		// https://gitlab.10up.com/10up-snippets/10up-snippets/-/blob/feature/analytics/analytics/gtm/gtm-mu-plugin.php
+
 		// $gtm_auth      = get_option( GTM_AUTH_PARAM_STRING, false );
 		// $gtm_preview   = get_option( GTM_PREVIEW_PARAM_STRING, false );
 
@@ -347,6 +364,7 @@ class Datalayer {
 		// 		esc_js( $gtm_preview )
 		// 	);
 		// }
+		
 		?>
 
 		<!-- Google Tag Manager -->
