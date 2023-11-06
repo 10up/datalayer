@@ -211,7 +211,7 @@ class Datalayer {
 		$this->data += [
 			'title'    => 'Homepage',
 			'url'      => home_url( $wp->request ),
-			'template' => 'home',
+			'template' => 'homepage',
 		];
 	}
 
@@ -296,7 +296,7 @@ class Datalayer {
 	 * @return string
 	 */
 	public function get_publish_date( $object_id ) {
-		return apply_filters( 'tenup_datalayer_publish_date', get_the_date( $this->get_date_format(), $object_id ) );
+		return apply_filters( 'tenup_datalayer_publish_date', get_post_time( $this->get_date_format(), false, $object_id ) );
 	}
 
 	/**
@@ -322,7 +322,7 @@ class Datalayer {
 	 * @return string
 	 */
 	public function get_date_format() {
-		return apply_filters( 'tenup_datalayer_date_format', get_option('date_format') );
+		return apply_filters( 'tenup_datalayer_date_format', 'Y-m-d H:i' );
 	}
 
 	/**
@@ -385,7 +385,6 @@ class Datalayer {
 		const params = ['utm_source', 'utm_medium', 'utm_campaign', 'gclid', 'fbclid'];
 		params.forEach((param) => {
 			const value = window.tenupDataLayer[param];
-			console.log(value);
 			const sessionValue = JSON.parse(sessionStorage.getItem(param));
 
 			if (value) {
