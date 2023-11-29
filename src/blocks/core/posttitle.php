@@ -38,7 +38,7 @@ function render( $block_content, $block, $instance ) {
 
 		$block_content->set_attribute( 'data-event', 'recirculation' );
 		$block_content->set_attribute( 'data-destinationLink', $destination );
-		$block_content->set_attribute( 'data-module', 'post-terms' );
+		$block_content->set_attribute( 'data-module', 'post-title' );
 		$block_content->get_updated_html();
 	}
 
