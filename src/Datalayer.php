@@ -92,6 +92,7 @@ class Datalayer {
 						'data-ctaText',
 						'data-destinationLink',
 						'data-module',
+						'data-brand',
 						'data-prodId',
 						'data-prodBrnd',
 						'data-prodName',
@@ -382,8 +383,7 @@ class Datalayer {
 		// Map the datalayer values before initiation.
 		window.dataLayer      = window.dataLayer || [];
 		window.tenupDataLayer = window.tenupDataLayer || [];
-		window.tenupDataLayer = <?php echo $data; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Need the & in URL. ?>;
-
+		window.tenupDataLayer = <?php echo htmlspecialchars_decode( $data ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Need the & in URL. ?>;
 		// Set the session storage for the URL parameters.
 		const params = ['utm_source', 'utm_medium', 'utm_campaign', 'gclid', 'fbclid', 'msclkid'];
 		params.forEach((param) => {
