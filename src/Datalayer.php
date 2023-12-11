@@ -92,6 +92,8 @@ class Datalayer {
 						'data-ctaText',
 						'data-destinationLink',
 						'data-module',
+						'data-brand',
+						'data-prodId',
 						'data-prodBrnd',
 						'data-prodName',
 						'data-prodPrice',
@@ -102,7 +104,7 @@ class Datalayer {
 						'data-utm_campaign',
 						'data-gclid',
 						'data-fbclid',
-						'data-prodId',
+						'data-msclkid',
 					]
 				),
 		];
@@ -119,7 +121,7 @@ class Datalayer {
 	 * @return void
 	 */
 	public function get_parameters() {
-		$parameters  = ['utm_source', 'utm_medium', 'utm_campaign', 'gclid', 'fbclid'];
+		$parameters  = ['utm_source', 'utm_medium', 'utm_campaign', 'gclid', 'fbclid', 'msclkid'];
 
 		foreach ( $parameters as $parameter ) {
 			if ( isset( $_GET[ $parameter ] ) ) {
@@ -127,7 +129,7 @@ class Datalayer {
 			}
 		}
 
-		$hashed_parameters = ['gclid', 'fbclid'];
+		$hashed_parameters = ['gclid', 'fbclid', 'msclkid'];
 
 		foreach ( $hashed_parameters as $h_parameter ) {
 			if ( isset( $_GET[ $h_parameter ] ) ) {
@@ -264,8 +266,10 @@ class Datalayer {
 			if ( ! in_array( $type, $excluded_taxonomies ) ) {
 				$terms = get_the_terms( $object_id, $type );
 
-				foreach ( $terms as $term ) {
-					$this->data[ $type ][] = apply_filters( 'tenup_datalayer_taxonomy_' . $type . '_name', $term->name, $term );
+				if ( ! empty( $terms ) ) {
+					foreach ( $terms as $term ) {
+						$this->data[ $type ][] = apply_filters( 'tenup_datalayer_taxonomy_' . $type . '_name', $term->name, $term );
+					}
 				}
 			}
 		}
@@ -379,10 +383,9 @@ class Datalayer {
 		// Map the datalayer values before initiation.
 		window.dataLayer      = window.dataLayer || [];
 		window.tenupDataLayer = window.tenupDataLayer || [];
-		window.tenupDataLayer = <?php echo $data; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Need the & in URL. ?>;
-
+		window.tenupDataLayer = <?php echo htmlspecialchars_decode( $data ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Need the & in URL. ?>;
 		// Set the session storage for the URL parameters.
-		const params = ['utm_source', 'utm_medium', 'utm_campaign', 'gclid', 'fbclid'];
+		const params = ['utm_source', 'utm_medium', 'utm_campaign', 'gclid', 'fbclid', 'msclkid'];
 		params.forEach((param) => {
 			const value = window.tenupDataLayer[param];
 			const sessionValue = JSON.parse(sessionStorage.getItem(param));
