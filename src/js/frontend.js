@@ -1,4 +1,16 @@
 /**
+ * Convert a string to title case.
+ *
+ * @param {*} str
+ * @returns {string}
+ */
+function toTitleCase(str) {
+	return str.replace(/\w\S*/g, function (txt) {
+		return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+	});
+}
+
+/**
  * Send the event to Google Tag Manager.
  *
  * @param {HTMLElement} element The element that was clicked.
@@ -10,7 +22,9 @@ function sendGTMEvent(element) {
 		const value = element.getAttribute(attribute);
 		if (value) {
 			const key = attribute.replace('data-', '');
-			acc[key] = value;
+
+			// Force proper case.
+			acc[key] = toTitleCase(value);
 		}
 		return acc;
 	}, {});

@@ -32,15 +32,17 @@ function render( $block_content, $block, $instance ) {
 
 	$block_content = new \WP_HTML_Tag_Processor( $block_content );
 
-	if ( $block_content->next_tag( 'a' ) ) {
-
+	while ( $block_content->next_tag(
+		[
+			'tag_name'    => 'a',
+			'tag_closers' => 'skip',
+		]
+	) ) {
 		$destination = $block_content->get_attribute( 'href' ) ?? '';
-
 		$block_content->set_attribute( 'data-event', 'recirculation' );
 		$block_content->set_attribute( 'data-destinationLink', $destination );
-		$block_content->set_attribute( 'data-module', 'post-terms' );
-		$block_content->get_updated_html();
+		$block_content->set_attribute( 'data-module', 'Post Title' );
 	}
 
-	return $block_content;
+	return $block_content->get_updated_html();
 }
