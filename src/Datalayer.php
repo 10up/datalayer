@@ -441,6 +441,8 @@ class Datalayer {
 			j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 			'https://www.googletagmanager.com/gtm.js?id='+i+dl<?php echo $params_string; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Need the & in URL. ?>;f.parentNode.insertBefore(j,f);
 		})(window,document,'script','dataLayer','<?php echo esc_js( $account_id ); ?>');
+
+		<?php do_action( 'tenup_datalayer_after_gtm_head_script' ); ?>
 		</script>
 		<!-- End Google Tag Manager -->
 
