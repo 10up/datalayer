@@ -154,7 +154,7 @@ class Datalayer {
 			'id'            => $object_id,
 			'title'         => $term->name,
 			'page'          => $term->slug,
-			'url'           => get_term_link( $id ),
+			'url'           => get_term_link( $object_id ),
 			'template'      => 'archive',
 			$term->taxonomy => $term->name,
 		];
