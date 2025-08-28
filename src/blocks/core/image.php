@@ -29,6 +29,7 @@ function setup() {
  * @return void
  */
 function render( $block_content, $block, $instance ) {
+	
 	$destination = false;
 
 	$temp_block_content = new \WP_HTML_Tag_Processor( $block_content );
