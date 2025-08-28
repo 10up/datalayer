@@ -29,7 +29,6 @@ function setup() {
  * @return void
  */
 function render( $block_content, $block, $instance ) {
-
 	$destination = false;
 
 	$temp_block_content = new \WP_HTML_Tag_Processor( $block_content );
@@ -37,14 +36,11 @@ function render( $block_content, $block, $instance ) {
 		$destination = $temp_block_content->get_attribute( 'href' ) ?? '';
 	}
 
-	if ( ! empty( $destination ) ) {
-		$block_content = new \WP_HTML_Tag_Processor( $block_content );
-		if ( $block_content->next_tag( 'img' ) ) {
-	
-		$block_content->set_attribute( 'data-event', 'clickable_image' );
-			$block_content->set_attribute( 'data-destinationLink', $destination );
-			$block_content->get_updated_html();
-		}
+	if ( ! empty( $destination ) && $temp_block_content->next_tag( 'img' ) ) {
+
+		$temp_block_content->set_attribute( 'data-event', 'clickable_image' );
+		$temp_block_content->set_attribute( 'data-destinationLink', $destination );
+		return $temp_block_content->get_updated_html();
 	}
 
 	return $block_content;
